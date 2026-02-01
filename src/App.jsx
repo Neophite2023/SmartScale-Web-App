@@ -85,7 +85,7 @@ function App() {
     }
   };
 
-  const exportToCSV = () => {
+  const exportToCSV = async () => {
     if (measurements.length === 0) return;
 
     // Headers and Slovak translation
@@ -98,19 +98,37 @@ function App() {
       return `${date},${weight},${bmi},${category}`;
     });
 
-    // Create CSV content with UTF-8 BOM for Excel compatibility
+    const fileName = `moje_vahy_${new Date().toISOString().split('T')[0]}.csv`;
     const csvContent = "\uFEFF" + headers.join(",") + "\n" + rows.join("\n");
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
 
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", `moje_vahy_${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
+    // Try Web Share API first (Native iOS/Android share sheet)
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], fileName, { type: 'text/csv' })] })) {
+      try {
+        const file = new File([blob], fileName, { type: 'text/csv' });
+        await navigator.share({
+          files: [file],
+          title: 'Export meraní',
+          text: 'Váha a BMI dáta zo SmartScale App'
+        });
+        return; // Success
+      } catch (err) {
+        if (err.name !== 'AbortError') console.error('Share failed:', err);
+        // Fallback to traditional download if share failed or was cancelled
+      }
+    }
+
+    // Fallback: Traditional Download
+    const url = URL.createObjectURL(blob);
+    const link = document.body.appendChild(document.createElement("a"));
+    link.href = url;
+    link.download = fileName;
+    link.style.display = 'none';
     link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url); // Clean up
+    setTimeout(() => {
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }, 100);
   };
 
   const handleDelete = async (id) => {
