@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+:root {
+  /* iOS System Colors - Light Mode (Default) */
+  --ios-system-blue: #5a89b1;
+  /* Muted Steel Blue */
+  --ios-system-blue-rgb: 90, 137, 177;
+  --ios-system-background: #f2f2f7;
+  --ios-secondary-system-background: #ffffff;
+  --ios-tertiary-system-background: #f2f2f7;
+  --ios-label: #000000;
+  --ios-secondary-label: #48484a;
+  /* Darker secondary label for better contrast */
+  --ios-separator: #c6c6c8;
+  --ios-fill: #e9e9eb;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ios-system-background: #000000;
+    --ios-secondary-system-background: #1c1c1e;
+    --ios-tertiary-system-background: #2c2c2e;
+    --ios-label: #ffffff;
+    --ios-secondary-label: #8e8e93;
+    --ios-separator: #38383a;
+    --ios-fill: #3a3a3c;
+  }
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--ios-system-background);
+  color: var(--ios-label);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ios-glass {
+  background: rgba(var(--ios-secondary-system-background-rgb), 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.ios-list-item {
+  background-color: var(--ios-secondary-system-background);
+  border-bottom: 0.5px solid var(--ios-separator);
+}
+
+.ios-list-item:last-child {
+  border-bottom: none;
+}
+
+.ios-card {
+  background-color: var(--ios-secondary-system-background);
+  border-radius: 12px;
+}
+
+button {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+button:active {
+  opacity: 0.6;
+}
