@@ -88,7 +88,8 @@ function App() {
   const exportToCSV = () => {
     if (measurements.length === 0) return;
 
-    const headers = ["Date", "Weight (kg)", "BMI", "Category"];
+    // Headers and Slovak translation
+    const headers = ["Dátum", "Váha (kg)", "BMI", "Kategória"];
     const rows = measurements.map(m => {
       const date = new Date(m.createdAt).toLocaleDateString();
       const weight = m.weight.toFixed(1);
@@ -97,15 +98,21 @@ function App() {
       return `${date},${weight},${bmi},${category}`;
     });
 
-    const csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n" + rows.join("\n");
-    const encodedUri = encodeURI(csvContent);
+    // Create CSV content with UTF-8 BOM for Excel compatibility
+    const csvContent = "\uFEFF" + headers.join(",") + "\n" + rows.join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `smart_scale_export_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `moje_vahy_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url); // Clean up
   };
+ Lively implementation of the Blob API for CSV export.
 
   const handleDelete = async (id) => {
     if (confirm("Naozaj chcete zmazať tento záznam?")) {
