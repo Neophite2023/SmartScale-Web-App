@@ -112,7 +112,6 @@ function App() {
     document.body.removeChild(link);
     URL.revokeObjectURL(url); // Clean up
   };
- Lively implementation of the Blob API for CSV export.
 
   const handleDelete = async (id) => {
     if (confirm("Naozaj chcete zmazať tento záznam?")) {
